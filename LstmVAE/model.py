@@ -32,8 +32,8 @@ class LSTM_Var_Autoencoder(object):
         self.stateful = stateful
         self.input = tf.placeholder(tf.float32, shape=[None, None,self.n_dim])
         self.batch_size = tf.placeholder(tf.int64)
-        #tf.data api 
-        
+         
+        #tf.data api
         dataset = tf.data.Dataset.from_tensor_slices(self.input).repeat().batch(self.batch_size)
         self.batch_ = tf.placeholder(tf.int32, shape=[])
         self.ite = dataset.make_initializable_iterator()
@@ -52,7 +52,6 @@ class LSTM_Var_Autoencoder(object):
                return z
         # (with few modifications) from https://stackoverflow.com/questions/37969065/tensorflow-best-way-to-save-state-in-rnns?noredirect=1&lq=1
     
-    
         def get_state_variables(batch_size, cell):
      # For each layer, get the initial state and make a variable out of it
      # to enable updating its value.
@@ -63,7 +62,6 @@ class LSTM_Var_Autoencoder(object):
      # Return as a tuple, so that it can be fed to dynamic_rnn as an initial state
          return tuple(state_variables)
      
-        
         def get_state_update_op(state_variables, new_states):
      # Add an operation to update the train states with the last state tensors
          update_ops = []
@@ -75,14 +73,11 @@ class LSTM_Var_Autoencoder(object):
      # The tuple's actual value should not be used.
          return tf.tuple(update_ops)
         
-        
         def get_state_reset_op(state_variables, cell, batch_size):
     # Return an operation to set each variable in a list of LSTMStateTuples to zero
             zero_states = cell.zero_state(batch_size, tf.float32)
             return get_state_update_op(state_variables, zero_states)    
-        
-        
-     
+    
         weights = {
     
     'z_mean':  tf.get_variable("z_mean", shape=[self.intermediate_dim,self.z_dim],
@@ -99,9 +94,7 @@ class LSTM_Var_Autoencoder(object):
            initializer=tf.zeros_initializer())
     } 
         
-        
         with tf.variable_scope("encoder"):
-            
             with tf.variable_scope("LSTM_encoder"):
                 lstm_layer=tf.nn.rnn_cell.LSTMCell(self.intermediate_dim,forget_bias=1,initializer=tf.contrib.layers.xavier_initializer()\
                                                ,activation=tf.nn.relu)
@@ -126,12 +119,10 @@ class LSTM_Var_Autoencoder(object):
     
         #from [batch_size,z_dim] to [batch_size, TIMESTEPS, z_dim] 
         repeated_z = tf.keras.layers.RepeatVector(self.repeat,dtype="float32")(self.z)
-        
-        
+  
         with tf.variable_scope("decoder"):
             
             if self.stateful :
-                
                 with tf.variable_scope('lstm_decoder_stateful'):
                     rnn_layers_ = [tf.nn.rnn_cell.LSTMCell(size,initializer=tf.contrib.layers.xavier_initializer(),forget_bias=1) for size in [self.intermediate_dim,n_dim]]
                     multi_rnn_cell_ = tf.nn.rnn_cell.MultiRNNCell(rnn_layers_)
@@ -180,9 +171,6 @@ class LSTM_Var_Autoencoder(object):
         if len(np.shape(X)) != 3:
             raise ValueError('Input must be a 3-D array. I could reshape it for you, but I am too lazy.'\
                              ' \n            Use input.reshape(-1,timesteps,1).')
-
-        #merged_summary = tf.summary.merge_all()
-        #writer = tf.summary.FileWriter('C://Users/Dany/Desktop/Python/tb')
         
         if optimizer_params is None:
                 optimizer_params = {}
@@ -237,7 +225,7 @@ class LSTM_Var_Autoencoder(object):
         end = timer()
         print("\n")
         print("Training time {:0.2f} minutes".format((end - start)/(60)))      
-        #tf.summary.FileWriter('C://Users/Dany/Desktop/Python/tb', self.sess.graph).close()  
+        
 
     def reconstruct(self, X, get_error = False):
         """ Reconstruct given data. 
@@ -249,19 +237,33 @@ class LSTM_Var_Autoencoder(object):
             
            _,_= self.sess.run([self.reset_state_op,self.reset_state_op_],feed_dict={self.batch_ : np.shape(X)[0]})
            
-           xre,_,_= self.sess.run([self.x_reconstr_mean,self.update_op,self.update_op_], 
+           x_rec,_,_= self.sess.run([self.x_reconstr_mean,self.update_op,self.update_op_], 
                              feed_dict={self.batch_ : np.shape(X)[0],self.repeat : np.shape(X)[1]})
         else : 
             
-            xre= self.sess.run(self.x_reconstr_mean, 
+            x_rec= self.sess.run(self.x_reconstr_mean, 
                              feed_dict={self.repeat :np.shape(X)[1]})
             
         if get_error : 
             
-            squared_error = (xre-X)**2
-            return xre, squared_error
+            squared_error = (x_rec-X)**2
+            return x_rec, squared_error
         
         else : 
-            return xre
+            return x_rec
     
-    
+     def reduce(self, X):
+        
+        self.sess.run(self.ite.initializer, feed_dict={self.input: X, self.batch_size: np.shape(X)[0]})
+        
+        if self.stateful :
+            
+           _= self.sess.run([self.reset_state_op],feed_dict={self.batch_ : np.shape(X)[0]})
+         
+           x,_= self.sess.run([self.z,self.update_op], 
+                             feed_dict={self.batch_ : np.shape(X)[0],self.repeat : np.shape(X)[1]})
+        else : 
+            
+           x = self.sess.run(self.z)
+            
+        return x
