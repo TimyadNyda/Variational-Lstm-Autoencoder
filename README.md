@@ -2,7 +2,7 @@
 
 #  ![CI status](https://img.shields.io/cocoapods/l/AFNetworking.svg)
 
-Variationnal auto-encoder for anomaly detection/features extraction, with lstm cells (stateless or statefull). 
+Variational auto-encoder for anomaly detection/features extraction, with lstm cells (stateless or statefull). 
 
 ## Installation
 
@@ -43,3 +43,14 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+## References 
+[Tutorial on variational Autoencoders](https://arxiv.org/pdf/1606.05908.pdf)
+
+[A Multimodal Anomaly Detector for Robot-Assisted Feeding
+Using an LSTM-based Variational Autoencoder](https://arxiv.org/pdf/1711.00614.pdf)
+
+[Variational Autoencoder based Anomaly Detection
+using Reconstruction Probability](http://dm.snu.ac.kr/static/docs/TR/SNUDM-TR-2015-03.pdf)
+
+[The Generalized Reparameterization Gradient](http://www.cs.columbia.edu/~blei/papers/RuizTitsiasBlei2016b.pdf)
