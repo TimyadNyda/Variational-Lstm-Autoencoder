@@ -54,3 +54,10 @@ Using an LSTM-based Variational Autoencoder](https://arxiv.org/pdf/1711.00614.pd
 using Reconstruction Probability](http://dm.snu.ac.kr/static/docs/TR/SNUDM-TR-2015-03.pdf)
 
 [The Generalized Reparameterization Gradient](http://www.cs.columbia.edu/~blei/papers/RuizTitsiasBlei2016b.pdf)
+
+## Soon
+- Notebook with an example :)
+- Probability of reconstruction 
+- Reparametrization trick for non-normal densities 
+ 
+
