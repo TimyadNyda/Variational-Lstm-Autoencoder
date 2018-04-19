@@ -252,7 +252,7 @@ class LSTM_Var_Autoencoder(object):
         else : 
             return x_rec
     
-     def reduce(self, X):
+    def reduce(self, X):
         
         self.sess.run(self.ite.initializer, feed_dict={self.input: X, self.batch_size: np.shape(X)[0]})
         
