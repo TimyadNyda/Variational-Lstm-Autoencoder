@@ -17,7 +17,7 @@ Variational auto-encoder for anomaly detection/features extraction, with lstm ce
 from LstmVAE import LSTM_Var_Autoencoder
 from LstmVAE import preprocess
 
-df = preprocess(input) #return standardized and normalized df, check NaN values replacing it with 0
+preprocess(df) #return standardized and normalized df, check NaN values replacing it with 0
 
 df = df.reshape(-1,timesteps,n_dim) #use 3D input, n_dim = 1 for 1D time series. 
 
