@@ -9,7 +9,14 @@ class LSTM_Var_Autoencoder(object):
 
     def __init__(self, intermediate_dim=None, z_dim=None, n_dim=None,
                  stateful=False):
-
+    """
+    Args:
+      intermediate_dim : LSTM cells dimension.
+      z_dim : dimension of latent space.
+      n_dim : dimension of input data.
+      statefull : if true, keep cell state through batches.
+    """
+        
         if not intermediate_dim or not z_dim or not n_dim:
             raise ValueError("You should set intermediate_dim, z_dim"
                              "(latent space) dimension and your input"
@@ -177,7 +184,8 @@ class LSTM_Var_Autoencoder(object):
             REG_LAMBDA=0,
             grad_clip_norm=10,
             optimizer_params=None,
-            verbose=True):
+            verbose=True):      
+        
         if len(np.shape(X)) != 3:
             raise ValueError(
                 'Input must be a 3-D array. I could reshape it for you, but I am too lazy.'
