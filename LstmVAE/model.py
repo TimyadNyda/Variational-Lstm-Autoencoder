@@ -45,7 +45,7 @@ class LSTM_Var_Autoencoder(object):
                 eps = tf.random_normal(tf.shape(sigma), 0, 1, dtype=tf.float32)
             # It should be log(sigma / 2), but this empirically converges"
             # much better for an unknown reason"
-                z = tf.add(mean, (tf.exp(sigma)/2) * eps)
+                z = tf.add(mean, tf.exp(sigma/2) * eps)
                 return z
 
     # (with few modifications) from https://stackoverflow.com/questions
