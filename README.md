@@ -2,7 +2,7 @@
 
 #  ![CI status](https://img.shields.io/cocoapods/l/AFNetworking.svg)
 
-Variational auto-encoder for anomaly detection/features extraction, with lstm cells (stateless or statefull). 
+Variational auto-encoder for anomaly detection/features extraction, with lstm cells (stateless or stateful). 
 
 ## Installation
 
