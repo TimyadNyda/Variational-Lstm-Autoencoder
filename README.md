@@ -55,9 +55,6 @@ using Reconstruction Probability](http://dm.snu.ac.kr/static/docs/TR/SNUDM-TR-20
 
 [The Generalized Reparameterization Gradient](http://www.cs.columbia.edu/~blei/papers/RuizTitsiasBlei2016b.pdf)
 
-## Soon
-- Notebook with an example :)
-- Probability of reconstruction 
-- Reparametrization trick for non-normal densities 
+
  
 
