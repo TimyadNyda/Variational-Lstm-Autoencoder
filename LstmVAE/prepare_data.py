@@ -10,7 +10,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 def preprocess(df):
     
-    """returns normalized and standardized data.
+    """returns normalized/standardized data.
     """
     
     df = np.asarray(df, dtype=np.float32)
@@ -23,8 +23,8 @@ def preprocess(df):
         df = np.nan_to_num()
     
     #standardize data 
-    df = StandardScaler().fit_transform(df)
-    print('Data standardized')
+    #df = StandardScaler().fit_transform(df)
+    #print('Data standardized')
     #normalize data
     df = MinMaxScaler().fit_transform(df)
     print('Data normalized')
