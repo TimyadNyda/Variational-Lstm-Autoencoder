@@ -45,7 +45,7 @@ class LSTM_Var_Autoencoder(object):
                 eps = tf.random_normal(tf.shape(sigma), 0, 1, dtype=tf.float32)
             # It should be log(sigma / 2), but this empirically converges"
             # much better for an unknown reason"
-                z = tf.add(mean, tf.exp(sigma/2) * eps)
+                z = tf.add(mean, sigma * eps)
                 return z
 
     # (with few modifications) from https://stackoverflow.com/questions
@@ -121,9 +121,9 @@ class LSTM_Var_Autoencoder(object):
         # LSTMStateTuples.
         self.z_mean = tf.add(tf.matmul(
             outputs[:, -1, :], weights['z_mean']), biases['z_mean_b'])
-        self.z_log_sigma_sq = tf.add(tf.matmul(
-            outputs[:, -1, :], weights['log_sigma']), biases['z_std_b'])
-        self.z = gauss_sampling(self.z_mean, self.z_log_sigma_sq)
+        self.z_sigma = tf.nn.softplus(tf.add(tf.matmul(
+            outputs[:, -1, :], weights['log_sigma']), biases['z_std_b']))
+        self.z = gauss_sampling(self.z_mean, self.z_sigma)
 
         # from [batch_size,z_dim] to [batch_size, TIMESTEPS, z_dim]
         repeated_z = tf.keras.layers.RepeatVector(
@@ -165,9 +165,9 @@ class LSTM_Var_Autoencoder(object):
                 tf.losses.mean_squared_error(
                     self.x, self.x_reconstr_mean))
         with tf.name_scope("KL_divergence"):
-            latent_loss = -0.5 * tf.reduce_sum(1 + 2 * self.z_log_sigma_sq
+            latent_loss = - 0.5 * tf.reduce_sum(1 + self.z_sigma**2
                                                - self.z_mean**2
-                                               - tf.exp(2 * self.z_log_sigma_sq), 1)
+                                               + tf.log(1.e-8 + self.z_sigma**2), 1)
             self._cost = tf.reduce_mean(reconstr_loss + latent_loss)
         # apply gradient clipping
         tvars = tf.trainable_variables()
