@@ -45,7 +45,7 @@ class LSTM_Var_Autoencoder(object):
                 eps = tf.random_normal(tf.shape(sigma), 0, 1, dtype=tf.float32)
             # It should be log(sigma / 2), but this empirically converges"
             # much better for an unknown reason"
-                z = tf.add(mean, sigma * eps)
+                z = tf.add(mean, tf.exp(0.5*sigma) * eps)
                 return z
 
     # (with few modifications) from https://stackoverflow.com/questions
@@ -165,9 +165,9 @@ class LSTM_Var_Autoencoder(object):
                 tf.losses.mean_squared_error(
                     self.x, self.x_reconstr_mean))
         with tf.name_scope("KL_divergence"):
-            latent_loss = - 0.5 * tf.reduce_sum(1 + self.z_sigma**2
+            latent_loss = - 0.5 * tf.reduce_sum(1 + self.z_sigma
                                                - self.z_mean**2
-                                               + tf.log(1.e-8 + self.z_sigma**2), 1)
+                                               - tf.exp(self.z_sigma), 1)
             self._cost = tf.reduce_mean(reconstr_loss + latent_loss)
         # apply gradient clipping
         tvars = tf.trainable_variables()
