@@ -26,7 +26,7 @@ def preprocess(df):
     #df = StandardScaler().fit_transform(df)
     #print('Data standardized')
     #normalize data
-    df = MinMaxScaler().fit_transform(df)
+    df = MinMaxScaler(feature_range=(-1, 1)).fit_transform(df)
     print('Data normalized')
     
     return df
