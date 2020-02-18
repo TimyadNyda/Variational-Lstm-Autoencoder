@@ -7,7 +7,7 @@ from timeit import default_timer as timer
 
 class LSTM_Var_Autoencoder(object):
 
-    def __init__(self, intermediate_dim=None, z_dim=None, n_dim=None,
+    def __init__(self, intermediate_dim=None, z_dim=None, n_dim=None, kulback_coef=0.1,
                  stateful=False):
         """
         Args:
@@ -31,7 +31,7 @@ class LSTM_Var_Autoencoder(object):
         self.stateful = stateful
         self.input = tf.placeholder(tf.float32, shape=[None, None, self.n_dim])
         self.batch_size = tf.placeholder(tf.int64)
-
+        self.kulback_coef = kulback_coef
         # tf.data api
         dataset = tf.data.Dataset.from_tensor_slices(self.input).repeat() \
             .batch(self.batch_size)
@@ -168,7 +168,7 @@ class LSTM_Var_Autoencoder(object):
             latent_loss = - 0.5 * tf.reduce_sum(1 + self.z_sigma
                                                - self.z_mean**2
                                                - tf.exp(self.z_sigma), 1)
-            self._cost = tf.reduce_mean(reconstr_loss + latent_loss)
+            self._cost = tf.reduce_mean(reconstr_loss + self.kulback_coef*latent_loss)
         # apply gradient clipping
         tvars = tf.trainable_variables()
         grads, _ = tf.clip_by_global_norm(tf.gradients(self._cost, tvars), 10)
