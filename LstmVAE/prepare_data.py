@@ -20,7 +20,7 @@ def preprocess(df):
         
     if np.any(sum(np.isnan(df)) != 0):
         print('Data contains null values. Will be replaced with 0')
-        df = np.nan_to_num()
+        df = np.nan_to_num(df)
     
     #standardize data 
     #df = StandardScaler().fit_transform(df)
